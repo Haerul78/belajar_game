@@ -10,6 +10,7 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
     BossEnemy boss;
     Timer timer;
     JFrame frame;
+    int stage;
 
     public TopDownShooterGame(JFrame frame) {
         this.frame = frame;
@@ -24,10 +25,11 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
     }
 
     public void startGame(int stage) {
+        this.stage = stage;
         timer.start();
         // Initialize enemies based on stage
         enemies.clear();
-        int enemyCount = stage == 5 ? 10 : 10;
+        int enemyCount = stage == 5 ? 10 : 50;
         for (int i = 0; i < enemyCount; i++) {
             enemies.add(new Enemy(new Random().nextInt(800), new Random().nextInt(600), 2));
         }
@@ -43,6 +45,15 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (player.hp <= 0) {
+            showGameOver();
+            return;
+        }
+        if (enemies.isEmpty() && boss == null) {
+            showWinner();
+            return;
+        }
+
         // Draw player
         g.setColor(Color.BLUE);
         g.fillOval(player.x, player.y, 30, 30);
@@ -166,6 +177,61 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
                 }
             }
         }
+    }
+
+    private void showGameOver() {
+        timer.stop();
+        JPanel gameOverPanel = new JPanel();
+        gameOverPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JButton retryButton = new JButton("Retry");
+        JButton exitButton = new JButton("Exit to Stage Selection");
+
+        retryButton.addActionListener(e -> {
+            frame.remove(gameOverPanel);
+            TopDownShooterGame newGame = new TopDownShooterGame(frame);
+            frame.add(newGame, "Game");
+            ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "Game");
+            newGame.startGame(stage);
+            newGame.requestFocusInWindow();
+        });
+
+        exitButton.addActionListener(e -> {
+            ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "StageSelection");
+        });
+
+        gameOverPanel.add(retryButton, gbc);
+        gameOverPanel.add(exitButton, gbc);
+
+        frame.add(gameOverPanel, "GameOver");
+        ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "GameOver");
+    }
+
+    private void showWinner() {
+        timer.stop();
+        JPanel winnerPanel = new JPanel();
+        winnerPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JButton nextButton = new JButton("Next Stage");
+        JButton exitButton = new JButton("Exit to Stage Selection");
+
+        nextButton.addActionListener(e -> {
+            ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "StageSelection");
+        });
+
+        exitButton.addActionListener(e -> {
+            ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "StageSelection");
+        });
+
+        winnerPanel.add(nextButton, gbc);
+        winnerPanel.add(exitButton, gbc);
+
+        frame.add(winnerPanel, "Winner");
+        ((CardLayout) frame.getContentPane().getLayout()).show(frame.getContentPane(), "Winner");
     }
 
     public static void main(String[] args) {
