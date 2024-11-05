@@ -21,3 +21,4 @@ public class MainMenu extends JPanel {
         add(exitButton, gbc);
     }
 }
+//menu
