@@ -174,5 +174,3 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
         frame.setVisible(true);
     }
 }
-
-//Hallo
