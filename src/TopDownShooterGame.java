@@ -47,6 +47,10 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
         g.setColor(Color.BLUE);
         g.fillOval(player.x, player.y, 30, 30);
 
+        // Draw player direction
+        g.setColor(Color.YELLOW);
+        g.drawLine(player.x + 15, player.y + 15, player.x + 15 + player.directionX * 30, player.y + 15 + player.directionY * 30);
+
         // Draw enemies
         g.setColor(Color.RED);
         for (Enemy enemy : enemies) {
@@ -143,6 +147,12 @@ public class TopDownShooterGame extends JPanel implements ActionListener, KeyLis
 
     private void attackEnemies() {
         int attackRange = 100;
+        int attackX = player.x + 15 + player.directionX * attackRange;
+        int attackY = player.y + 15 + player.directionY * attackRange;
+        Graphics g = getGraphics();
+        g.setColor(Color.ORANGE);
+        g.drawLine(player.x + 15, player.y + 15, attackX, attackY);
+
         enemies.removeIf(enemy -> {
             int distance = (int) Math.sqrt(Math.pow(enemy.x - player.x, 2) + Math.pow(enemy.y - player.y, 2));
             return distance <= attackRange;
