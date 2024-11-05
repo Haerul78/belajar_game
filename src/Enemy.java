@@ -16,3 +16,4 @@ public class Enemy {
         if (player.y < y) y--;
     }
 }
+//musuh
